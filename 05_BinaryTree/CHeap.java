@@ -63,8 +63,61 @@
                 return 1 + heap_size(root.leftNode) + heap_size(root.rightNode);
         }
         
-        public void insert(int item){
-            
+        public void insertMax(HeapNode root, int item){
+            if(root != null){
+                HeapNode newNode = new HeapNode(item);
+                LinkedList<HeapNode> childrens = new LinkedList<HeapNode>();
+                insert(root, newNode, childrens);
+            }
+        }
+        
+        //Getting access to root node, 
+        public void insert(HeapNode root, HeapNode newNode, LinkedList<HeapNode> childrens){
+            if(root.leftNode == null)
+                root.leftNode = newNode;
+            else if(root.rightNode == null)
+                root.rightNode = newNode;
+            else{
+                //Insert in the the Queue
+                childrens.add(root.leftNode);
+                childrens.add(root.rightNode);
+                //Call insert on the first element in the Queue
+                insert(childrens.poll(), newNode, childrens);
+            }
+            //After insertion of the element, move it to the right position
+            swapMax(root);
+        }
+        public void swapMax(HeapNode node){
+            if(node != null){
+                int maximum = node.data;
+                char direction = 'P';//Parent
+                if(node.leftNode != null){
+                    if(node.leftNode.data > maximum){
+                        //Set left node data to max
+                        maximum = node.leftNode.data;
+                        direction = 'L'; //Left
+                    }
+                }
+                if(node.rightNode != null){
+                    if(node.rightNode.data > maximum){
+                        maximum = node.rightNode.data;
+                        direction = 'R';
+                    }
+                }
+                if(direction != 'P'){
+                    switch(direction){
+                        case 'L':
+                            //Swap left with parent
+                            node.data = node.leftNode.data;
+                            node.leftNode.data = maximum;
+                            break;
+                        case 'R':
+                            node.data = node.rightNode.data;
+                            node.rightNode.data = maximum;
+                            break;
+                    }
+                }
+            }
         }
         
     }
